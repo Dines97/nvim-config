@@ -255,9 +255,10 @@ local function cmp_nvim_lsp_config()
 end
 
 local function nvim_cmp_config()
-  local luasnip = require 'luasnip'
+  local luasnip = require('luasnip')
+  local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+  local cmp = require('cmp')
 
-  local cmp = require 'cmp'
   cmp.setup {
     snippet = {
       expand = function(args)
@@ -296,6 +297,8 @@ local function nvim_cmp_config()
       { name = 'luasnip' },
     },
   }
+
+  cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
 end
 
 local function nvim_treesitter_context_config()
@@ -318,6 +321,10 @@ local function presence_config()
   require("presence"):setup()
 end
 
+local function autopairs_config()
+  require("nvim-autopairs").setup()
+end
+
 local function packer_plugins(use)
   -- Plugin manager
   use {
@@ -327,6 +334,11 @@ local function packer_plugins(use)
   use {
     'andweeb/presence.nvim',
     config = presence_config
+  }
+
+  use {
+    "windwp/nvim-autopairs",
+    config = autopairs_config
   }
 
   use {
@@ -364,7 +376,7 @@ local function packer_plugins(use)
 
   use {
     'hrsh7th/nvim-cmp',
-    after = { 'LuaSnip' },
+    after = { 'LuaSnip', 'nvim-autopairs' },
     config = nvim_cmp_config
   }
 
