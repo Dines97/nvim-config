@@ -9,10 +9,10 @@ local keymaps = {
     ["<C-l>"] = "<C-w>l",
 
     -- Resize with arrows
-    ["<C-Up>"] = ":resize -2<CR>",
-    ["<C-Down>"] = ":resize +2<CR>",
-    ["<C-Left>"] = ":vertical resize -2<CR>",
-    ["<C-Right>"] = ":vertical resize +2<CR>",
+    ["<C-Up>"] = "<cmd>lua require('tmux').resize_top()<cr>",
+    ["<C-Down>"] = "<cmd>lua require('tmux').resize_bottom()<cr>",
+    ["<C-Left>"] = "<cmd>lua require('tmux').resize_left()<cr>",
+    ["<C-Right>"] = "<cmd>lua require('tmux').resize_right()<cr>",
 
     -- Tab switch buffer
     ["<S-l>"] = ":BufferLineCycleNext<CR>",

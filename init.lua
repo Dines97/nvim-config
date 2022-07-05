@@ -15,6 +15,12 @@ vim.opt.shiftround = true
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 
+vim.opt.undofile = true
+
 vim.opt.scrolloff = 5
 
 vim.cmd('syntax on')
+
+vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
+  callback = function() vim.lsp.buf.formatting_sync() end
+})

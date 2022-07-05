@@ -3,6 +3,7 @@ local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
 
 if fn.empty(fn.glob(install_path)) > 0 then
   packer_bootstrap = fn.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path })
+  vim.o.runtimepath = vim.fn.stdpath('data') .. '/site/pack/*/start/*,' .. vim.o.runtimepath
 end
 
 local function onedark_config()
@@ -24,7 +25,7 @@ end
 
 local function nvim_treesitter_config()
   local opts = {
-    ensure_installed = { "c", "cpp", "lua", "rust", "nix" },
+    ensure_installed = { "c", "cpp", "lua", "rust", "nix", "dockerfile", "yaml", "python" },
     highlight = {
       enable = true,
     },
@@ -63,7 +64,16 @@ local function gitsigns_config()
 end
 
 local function tmux_config()
-  require("tmux").setup()
+  local opts = {
+    navigation = {
+      enable_default_keybindings = true,
+    },
+    resize = {
+      enable_default_keybindings = false
+    }
+  }
+
+  require("tmux").setup(opts)
 end
 
 local function surround_config()
@@ -191,6 +201,8 @@ end
 
 local function cmp_nvim_lsp_config()
   local function on_attach(client, bufnr)
+    require("notify")("LSP attached")
+
     local mappings = {
       l = {
         f = { function() vim.lsp.buf.formatting() end, "Format" }
@@ -238,6 +250,8 @@ local function cmp_nvim_lsp_config()
   local luadev_require = require('lua-dev').setup(opts_dev)
   require("lspconfig")["sumneko_lua"].setup(luadev_require)
   require("lspconfig")["rnix"].setup(opts)
+  require("lspconfig")["dockerls"].setup(opts)
+  require("lspconfig")["yamlls"].setup(opts)
 end
 
 local function nvim_cmp_config()
@@ -288,10 +302,39 @@ local function nvim_treesitter_context_config()
   require('treesitter-context').setup()
 end
 
+local function nvim_lsp_installer_config()
+  local opts = {
+    ensure_installed = { 'dockerls', 'yamlls' }
+  }
+
+  require("nvim-lsp-installer").setup(opts)
+end
+
+-- local function suda_config()
+--   -- vim.g.suda_smart_edit = 1
+-- end
+
+local function presence_config()
+  require("presence"):setup()
+end
+
 local function packer_plugins(use)
   -- Plugin manager
   use {
     'wbthomason/packer.nvim'
+  }
+
+  use {
+    'andweeb/presence.nvim',
+    config = presence_config
+  }
+
+  use {
+    'towolf/vim-helm'
+  }
+
+  use {
+    'rcarriga/nvim-notify'
   }
 
   -- Onedark theme
@@ -300,9 +343,10 @@ local function packer_plugins(use)
     config = onedark_config
   }
 
-  use {
-    'lambdalisue/suda.vim',
-  }
+  -- use {
+  --   'lambdalisue/suda.vim',
+  --   config = suda_config
+  -- }
 
   use {
     'hrsh7th/cmp-nvim-lsp',
@@ -328,9 +372,15 @@ local function packer_plugins(use)
     "folke/lua-dev.nvim"
   }
 
+  use {
+    'williamboman/nvim-lsp-installer',
+    config = nvim_lsp_installer_config
+  }
+
   -- nvim-lspconfig
   use {
-    "neovim/nvim-lspconfig"
+    'neovim/nvim-lspconfig',
+    requires = { 'nvim-lsp-installer' }
   }
 
   -- nvim-treesitter
@@ -341,7 +391,7 @@ local function packer_plugins(use)
   }
 
   use {
-   'nvim-treesitter/nvim-treesitter-context' ,
+    'nvim-treesitter/nvim-treesitter-context',
     after = 'nvim-treesitter',
     config = nvim_treesitter_context_config
   }
@@ -411,7 +461,7 @@ end
 
 local packer_config = {
   display = {
-    open_fn = require('packer.util').float,
+    -- open_fn = require('packer.util').float,
   }
 }
 
