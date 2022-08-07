@@ -2,9 +2,16 @@ local fn = vim.fn
 local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
 
 if fn.empty(fn.glob(install_path)) > 0 then
-  packer_bootstrap = fn.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path })
+  packer_bootstrap = fn.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim',
+    install_path })
   vim.o.runtimepath = vim.fn.stdpath('data') .. '/site/pack/*/start/*,' .. vim.o.runtimepath
 end
+
+local packer_init_config = {
+  max_jobs = 10
+}
+
+require('packer').init(packer_init_config)
 
 local function onedark_config()
   local opts = {
@@ -25,7 +32,7 @@ end
 
 local function nvim_treesitter_config()
   local opts = {
-    ensure_installed = { "c", "cpp", "lua", "rust", "nix", "dockerfile", "yaml", "python" },
+    ensure_installed = { "c", "cpp", "lua", "rust", "nix", "dockerfile", "yaml", "python", "go", "haskell", "make" },
     highlight = {
       enable = true,
     },
@@ -36,6 +43,9 @@ local function nvim_treesitter_config()
       enable = true
     }
   }
+
+  -- vim.opt.foldmethod = 'expr'
+  -- vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
 
   require("nvim-treesitter.configs").setup(opts)
 end
@@ -48,8 +58,14 @@ local function lualine_config()
   local opts = {
     options = {
       globalstatus = true,
-      -- theme = 'onedark'
-    }
+      theme = 'onedark',
+      section_separators = '',
+      component_separators = '',
+    },
+    sections = {
+      lualine_b = { 'branch', 'diff',
+        { 'diagnostics', symbols = { error = 'e', warn = 'w', info = 'i', hint = 'h' } } },
+      lualine_x = { 'encoding', { 'fileformat', symbols = { unix = 'LF', dos = 'CRLF', mac = 'CR', } }, 'filetype' } }
   }
 
   require("lualine").setup(opts)
@@ -87,8 +103,8 @@ end
 local function which_key_config()
   local opts = {
     plugins = {
-      marks = true, -- shows a list of your marks on ' and `
-      registers = true, -- shows your registers on " in NORMAL or <C-r> in INSERT mode
+      marks = false, -- shows a list of your marks on ' and `
+      registers = false, -- shows your registers on " in NORMAL or <C-r> in INSERT mode
       -- the presets plugin, adds help for a bunch of default keybindings in Neovim
       -- No actual key bindings are created
       presets = {
@@ -100,7 +116,7 @@ local function which_key_config()
         z = true, -- bindings for folds, spelling and others prefixed with z
         g = true, -- bindings for prefixed with g
       },
-      spelling = { enabled = true, suggestions = 20 }, -- use which-key for spelling hints
+      spelling = { enabled = false, suggestions = 20 }, -- use which-key for spelling hints
     },
     icons = {
       breadcrumb = "»", -- symbol used in the command line area that shows your active key combo
@@ -153,7 +169,10 @@ local function which_key_config()
     g = {
       name = "Git",
       a = { "<cmd>Gwrite<cr>", "Git add" },
-      s = { "<cmd>Git<cr>", "Git status" }
+      s = { "<cmd>Git<cr>", "Git status" },
+      p = { function() require("gitsigns").preb_hunk() end, "Prev hunk" },
+      n = { function() require("gitsigns").next_hunk() end, "Next hunk" },
+      h = { function() require("gitsigns").preview_hunk() end, "Preview hunk" }
     },
     P = {
       name = "Packer",
@@ -183,7 +202,13 @@ local function which_key_config()
     },
     l = {
       name = "LSP",
-      c = { function() vim.diagnostic.open_float() end, "Float" }
+      c = { function() vim.diagnostic.open_float() end, "Float" },
+      l = { '<cmd>Trouble workspace_diagnostics<cr>', "List" }
+
+    },
+    t = {
+      name = "Telescope",
+      f = { function() require('telescope.builtin').find_files() end, 'Files' }
     }
   }
 
@@ -205,7 +230,10 @@ local function cmp_nvim_lsp_config()
 
     local mappings = {
       l = {
-        f = { function() vim.lsp.buf.formatting() end, "Format" }
+        f = { function() vim.lsp.buf.formatting() end, "Format" },
+        d = { function() vim.lsp.buf.definition() end, "Definition" },
+        q = { function() vim.lsp.buf.code_action() end, "Quick fix" },
+        r = { function() vim.lsp.buf.rename() end, "Rename" }
       }
     }
 
@@ -250,8 +278,12 @@ local function cmp_nvim_lsp_config()
   local luadev_require = require('lua-dev').setup(opts_dev)
   require("lspconfig")["sumneko_lua"].setup(luadev_require)
   require("lspconfig")["rnix"].setup(opts)
+  require("lspconfig")["gopls"].setup(opts)
   require("lspconfig")["dockerls"].setup(opts)
   require("lspconfig")["yamlls"].setup(opts)
+  -- require("lspconfig")["jedi_language_server"].setup(opts)
+  require("lspconfig")["pyright"].setup(opts)
+  require("lspconfig")["hls"].setup(opts)
 end
 
 local function nvim_cmp_config()
@@ -305,13 +337,13 @@ local function nvim_treesitter_context_config()
   require('treesitter-context').setup()
 end
 
-local function nvim_lsp_installer_config()
-  local opts = {
-    ensure_installed = { 'dockerls', 'yamlls' }
-  }
-
-  require("nvim-lsp-installer").setup(opts)
-end
+-- local function nvim_lsp_installer_config()
+--   local opts = {
+--     ensure_installed = { 'dockerls', 'yamlls' }
+--   }
+--
+--   require("nvim-lsp-installer").setup(opts)
+-- end
 
 -- local function suda_config()
 --   -- vim.g.suda_smart_edit = 1
@@ -325,156 +357,201 @@ local function autopairs_config()
   require("nvim-autopairs").setup()
 end
 
+local function null_ls_config()
+  local null_ls = require("null-ls")
+
+  local opts = {
+    sources = {
+      null_ls.builtins.formatting.isort,
+      null_ls.builtins.diagnostics.pylint,
+      null_ls.builtins.formatting.black,
+      -- null_ls.builtins.diagnostics.vale
+
+      null_ls.builtins.formatting.prettier
+
+    }
+  }
+
+  require("null-ls").setup(opts)
+end
+
+local function indent_config()
+  local opts = {
+    show_current_context = true,
+    show_current_context_start = true
+  }
+
+  require("indent_blankline").setup(opts)
+end
+
+local function pretty_fold_config()
+  require("pretty-fold").setup()
+  require("pretty-fold.preview").setup()
+end
+
+local function telescope_config()
+  require('telescope').setup()
+end
+
+local function comment_config()
+  require('Comment').setup()
+end
+
+local function dap_go_config()
+  require('dap-go').setup()
+end
+
+local function dap_ui_config()
+  local opts = {
+    layouts = {
+      {
+        elements = {
+          "scopes",
+          "breakpoints",
+          "stacks",
+          "watches",
+        },
+        size = 0.20, -- 25% of total lines
+        position = "bottom",
+      },
+    }
+  }
+
+  require("dapui").setup(opts)
+end
+
+local function luasnip_config()
+  local opts = {
+    include = { "go" }
+  }
+
+  require("luasnip.loaders.from_vscode").load(opts)
+end
+
+local function trouble_config()
+  require('trouble').setup()
+end
+
+local function alpha_config()
+  require('alpha').setup(require('alpha.themes.dashboard').config)
+end
+
+local function auto_save_config()
+  local opts = {
+    trigger_events = { "InsertLeave" }
+  }
+
+  require('auto-save').setup(opts)
+end
+
 local function packer_plugins(use)
   -- Plugin manager
-  use {
-    'wbthomason/packer.nvim'
-  }
+  use { 'wbthomason/packer.nvim' }
 
-  use {
-    'andweeb/presence.nvim',
-    config = presence_config
-  }
+  -- Themes START
+  use { 'navarasu/onedark.nvim', config = onedark_config }
+  -- Themes END
 
-  use {
-    "windwp/nvim-autopairs",
-    config = autopairs_config
-  }
+  -- Startup START
+  use { 'goolord/alpha-nvim', config = alpha_config }
+  -- Startup END
 
-  use {
-    'towolf/vim-helm'
-  }
+  -- use { 'pocco81/auto-save.nvim', cofifg = auto_save_config }
 
-  use {
-    'rcarriga/nvim-notify'
-  }
+  -- DAP Start
+  use { 'mfussenegger/nvim-dap' }
 
-  -- Onedark theme
-  use {
-    'navarasu/onedark.nvim',
-    config = onedark_config
-  }
+  use { 'leoluz/nvim-dap-go', config = dap_go_config }
 
-  -- use {
-  --   'lambdalisue/suda.vim',
-  --   config = suda_config
-  -- }
+  use { "rcarriga/nvim-dap-ui", requires = { "mfussenegger/nvim-dap" }, config = dap_ui_config }
+  -- DAP End
 
-  use {
-    'hrsh7th/cmp-nvim-lsp',
-    after = { 'which-key.nvim', 'lua-dev.nvim', 'nvim-lspconfig' },
-    config = cmp_nvim_lsp_config
-  }
+  use { 'nvim-telescope/telescope.nvim', requires = 'nvim-lua/plenary.nvim', config = telescope_config }
 
-  use {
-    'saadparwaiz1/cmp_luasnip',
-  }
+  use { 'anuvyklack/pretty-fold.nvim', requires = 'anuvyklack/nvim-keymap-amend' }
 
-  use {
-    'L3MON4D3/LuaSnip'
-  }
+  use { 'lukas-reineke/indent-blankline.nvim', config = indent_config }
 
-  use {
-    'hrsh7th/nvim-cmp',
-    after = { 'LuaSnip', 'nvim-autopairs' },
-    config = nvim_cmp_config
-  }
+  use { 'andweeb/presence.nvim', config = presence_config }
 
-  use {
-    "folke/lua-dev.nvim"
-  }
+  use { 'marcelofern/vale.nvim' }
 
-  use {
-    'williamboman/nvim-lsp-installer',
-    config = nvim_lsp_installer_config
-  }
+  use { "windwp/nvim-autopairs", config = autopairs_config }
 
-  -- nvim-lspconfig
-  use {
-    'neovim/nvim-lspconfig',
-    requires = { 'nvim-lsp-installer' }
-  }
+  use { 'towolf/vim-helm' }
 
-  -- nvim-treesitter
-  use {
-    'nvim-treesitter/nvim-treesitter',
-    run = ':TSUpdate',
-    config = nvim_treesitter_config
-  }
+  use { 'rcarriga/nvim-notify' }
 
-  use {
-    'nvim-treesitter/nvim-treesitter-context',
-    after = 'nvim-treesitter',
-    config = nvim_treesitter_context_config
-  }
+  -- use { 'lambdalisue/suda.vim', config = suda_config }
+
+  use { 'hrsh7th/cmp-nvim-lsp', after = { 'which-key.nvim', 'lua-dev.nvim', 'nvim-lspconfig' },
+    config = cmp_nvim_lsp_config }
+
+  use { 'saadparwaiz1/cmp_luasnip', }
+
+  use { 'L3MON4D3/LuaSnip', config = luasnip_config }
+
+  use { "rafamadriz/friendly-snippets" }
+
+  use { "folke/lua-dev.nvim" }
+
+
+  -- LSP Start
+  -- Ready made LSP configs
+  use { 'neovim/nvim-lspconfig' }
+
+  -- LSP helper functions to use with lualine
+  use { 'nvim-lua/lsp-status.nvim' }
+
+  -- use { 'williamboman/nvim-lsp-installer', config = nvim_lsp_installer_config }
+
+  use { 'jose-elias-alvarez/null-ls.nvim', requires = { 'nvim-lua/plenary.nvim' }, config = null_ls_config }
+
+  use { 'folke/trouble.nvim', requires = 'kyazdani42/nvim-web-devicons', config = trouble_config }
+
+  use { 'hrsh7th/nvim-cmp', after = { 'LuaSnip', 'nvim-autopairs' }, config = nvim_cmp_config }
+  -- LSP End
+
+  -- Treesitter
+  use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate', config = nvim_treesitter_config }
+
+  use { 'nvim-treesitter/nvim-treesitter-context', after = 'nvim-treesitter', config = nvim_treesitter_context_config }
+
+  use { 'numToStr/Comment.nvim', config = comment_config }
 
   -- File tree
-  use {
-    "kyazdani42/nvim-tree.lua",
-    requires = {
-      "kyazdani42/nvim-web-devicons",
-    },
-    config = nvim_tree_config
-  }
+  use { "kyazdani42/nvim-tree.lua", requires = { "kyazdani42/nvim-web-devicons", }, config = nvim_tree_config }
 
   -- lualine
-  use {
-    'nvim-lualine/lualine.nvim',
-    requires = {
-      'kyazdani42/nvim-web-devicons'
-    },
-    config = lualine_config
-  }
+  use { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true }, config = lualine_config }
 
   -- bufferline
-  use {
-    'akinsho/bufferline.nvim',
-    requires = {
-      'kyazdani42/nvim-web-devicons'
-    },
-    config = bufferline_config
-  }
+  use { 'akinsho/bufferline.nvim', requires = { 'kyazdani42/nvim-web-devicons' }, config = bufferline_config }
 
   -- Git
-  use {
-    'lewis6991/gitsigns.nvim',
-    config = gitsigns_config
-  }
+  use { 'lewis6991/gitsigns.nvim', config = gitsigns_config }
 
-  use {
-    "tpope/vim-fugitive"
-  }
+  use { "tpope/vim-fugitive" }
 
   -- tmux
-  use {
-    "aserowy/tmux.nvim",
-    config = tmux_config
-  }
+  use { "aserowy/tmux.nvim", config = tmux_config }
 
-  use {
-    "ur4ltz/surround.nvim",
-    config = surround_config
-  }
+  use { "ur4ltz/surround.nvim", config = surround_config }
 
-  use {
-    "moll/vim-bbye"
-  }
+  use { "moll/vim-bbye" }
 
   -- Space menu
-  use {
-    "max397574/which-key.nvim",
-    config = which_key_config
-  }
+  use { "max397574/which-key.nvim", config = which_key_config }
 
   if packer_bootstrap then
     require('packer').sync()
   end
 end
 
-local packer_config = {
+local packer_startup_config = {
   display = {
     -- open_fn = require('packer.util').float,
   }
 }
 
-require('packer').startup({ packer_plugins, config = packer_config })
+require('packer').startup({ packer_plugins, config = packer_startup_config })
