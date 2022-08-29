@@ -32,7 +32,8 @@ end
 
 local function nvim_treesitter_config()
   local opts = {
-    ensure_installed = { "c", "cpp", "lua", "rust", "nix", "dockerfile", "yaml", "python", "go", "haskell", "make" },
+    ensure_installed = { "c", "cpp", "lua", "rust", "nix", "dockerfile", "yaml", "python", "go", "haskell", "make", "vue",
+      "javascript" },
     highlight = {
       enable = true,
     },
@@ -65,7 +66,8 @@ local function lualine_config()
     sections = {
       lualine_b = { 'branch', 'diff',
         { 'diagnostics', symbols = { error = 'e', warn = 'w', info = 'i', hint = 'h' } } },
-      lualine_x = { 'encoding', { 'fileformat', symbols = { unix = 'LF', dos = 'CRLF', mac = 'CR', } }, 'filetype' } }
+      lualine_x = { 'encoding', { 'fileformat', symbols = { unix = 'LF', dos = 'CRLF', mac = 'CR', } }, 'filetype' }
+    }
   }
 
   require("lualine").setup(opts)
@@ -284,6 +286,20 @@ local function cmp_nvim_lsp_config()
   -- require("lspconfig")["jedi_language_server"].setup(opts)
   require("lspconfig")["pyright"].setup(opts)
   require("lspconfig")["hls"].setup(opts)
+
+  local volar_opts = {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' }
+    -- settings = {
+    --   Lua = {
+    --     diagnostics = {
+    --       globals = { 'vim' }
+    --     }
+    --   }
+    -- }
+  }
+  require("lspconfig")["volar"].setup(volar_opts)
 end
 
 local function nvim_cmp_config()
@@ -513,7 +529,7 @@ local function packer_plugins(use)
   -- LSP End
 
   -- Treesitter
-  use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate', config = nvim_treesitter_config }
+  use(require('plugins.treesitter'))
 
   use { 'nvim-treesitter/nvim-treesitter-context', after = 'nvim-treesitter', config = nvim_treesitter_context_config }
 
