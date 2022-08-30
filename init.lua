@@ -1,4 +1,4 @@
-require("plugins")
+require("plugin_loader")
 
 require("keymaps").load()
 
