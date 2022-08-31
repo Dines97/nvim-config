@@ -19,11 +19,17 @@ local function packer_plugins(use)
 
   local function recursive_require_files(folder, path)
     for _, entry in ipairs(vim.fn.readdir(folder)) do
-      if vim.fn.isdirectory(folder .. '/' .. entry) ~= 0 then
-        recursive_require_files(folder .. '/' .. entry, path .. entry .. '.')
-      else
-        if entry:sub(1, 1) ~= '_' then
-          use(require(path .. entry:gsub('%.lua$', '')))
+      if entry:sub(1, 1) ~= '_' then
+        if vim.fn.isdirectory(folder .. '/' .. entry) ~= 0 then
+          recursive_require_files(folder .. '/' .. entry, path .. entry .. '.')
+        else
+
+          local ok, table = pcall(require, path .. entry:gsub('%.lua$', ''))
+          if not ok then
+            print("Error require: " .. path .. entry:gsub('%.lua$', ''))
+          end
+
+          use(table)
         end
       end
     end

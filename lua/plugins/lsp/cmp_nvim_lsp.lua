@@ -58,6 +58,12 @@ local function config()
   -- require("lspconfig")["jedi_language_server"].setup(opts)
   require("lspconfig")["pyright"].setup(opts)
   require("lspconfig")["hls"].setup(opts)
+  -- require("lspconfig")["omnisharp"].setup {
+  --   cmd = { "OmniSharp" },
+  --
+  --   on_attach = on_attach,
+  --   capabilities = capabilities
+  -- }
 
   local volar_opts = {
     on_attach = on_attach,
