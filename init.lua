@@ -22,5 +22,5 @@ vim.opt.scrolloff = 5
 vim.cmd('syntax on')
 
 vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
-  callback = function() vim.lsp.buf.formatting_sync() end
+  callback = function() vim.lsp.buf.format({ async = false }) end
 })

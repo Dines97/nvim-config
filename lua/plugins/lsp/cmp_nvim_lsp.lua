@@ -4,7 +4,7 @@ local function config()
 
     local mappings = {
       l = {
-        f = { function() vim.lsp.buf.formatting() end, "Format" },
+        f = { function() vim.lsp.buf.format({ async = true }) end, "Format" },
         d = { function() vim.lsp.buf.definition() end, "Definition" },
         q = { function() vim.lsp.buf.code_action() end, "Quick fix" },
         r = { function() vim.lsp.buf.rename() end, "Rename" }
@@ -23,61 +23,58 @@ local function config()
   end
 
   local capabilities = vim.lsp.protocol.make_client_capabilities()
-  capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
+  capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 
   local opts = {
     on_attach = on_attach,
-    capabilities = capabilities
-    -- settings = {
-    --   Lua = {
-    --     diagnostics = {
-    --       globals = { 'vim' }
-    --     }
-    --   }
-    -- }
+    capabilities = capabilities,
   }
 
-  local opts_dev = {
-    library = {
-      vimruntime = true, -- runtime path
-      types = true, -- full signature, docs and completion of vim.api, vim.treesitter, vim.lsp and others
-      plugins = true, -- installed opt or start plugins in packpath
-      -- you can also specify the list of plugins to make available as a workspace library
-      -- plugins = { "nvim-treesitter", "plenary.nvim", "telescope.nvim" },
-    },
-    runtime_path = false,
-    lspconfig = opts
-  }
-
-  local luadev_require = require('lua-dev').setup(opts_dev)
-  require("lspconfig")["sumneko_lua"].setup(luadev_require)
-  require("lspconfig")["rnix"].setup(opts)
+  -- require("lspconfig")["rnix"].setup(opts)
   require("lspconfig")["gopls"].setup(opts)
   require("lspconfig")["dockerls"].setup(opts)
   require("lspconfig")["yamlls"].setup(opts)
   -- require("lspconfig")["jedi_language_server"].setup(opts)
   require("lspconfig")["pyright"].setup(opts)
   require("lspconfig")["hls"].setup(opts)
-  -- require("lspconfig")["omnisharp"].setup {
-  --   cmd = { "OmniSharp" },
-  --
-  --   on_attach = on_attach,
-  --   capabilities = capabilities
-  -- }
+  require("lspconfig")["nil_ls"].setup(opts)
 
-  local volar_opts = {
+  require("lspconfig")["sumneko_lua"].setup {
     on_attach = on_attach,
     capabilities = capabilities,
-    filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' }
-    -- settings = {
-    --   Lua = {
-    --     diagnostics = {
-    --       globals = { 'vim' }
-    --     }
-    --   }
-    -- }
+    settings = {
+      Lua = {
+        workspace = {
+          library = {
+            '/run/current-system/sw/share/awesome/lib'
+          },
+        },
+        diagnostics = {
+          globals = { 'vim' }
+        }
+      }
+    }
   }
-  require("lspconfig")["volar"].setup(volar_opts)
+
+  require("lspconfig")["omnisharp"].setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+
+    cmd = { "OmniSharp" },
+    handlers = {
+      ["textDocument/definition"] = require('omnisharp_extended').handler,
+    },
+  }
+
+  require("lspconfig")["volar"].setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+
+    filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' }
+  }
+
+
 end
 
-return { 'hrsh7th/cmp-nvim-lsp', after = { 'which-key.nvim', 'lua-dev.nvim', 'nvim-lspconfig' }, config = config }
+return { 'hrsh7th/cmp-nvim-lsp', after = { 'which-key.nvim', 'nvim-lspconfig', 'neodev.nvim' },
+  requires = { 'Hoffs/omnisharp-extended-lsp.nvim' }, config = config }

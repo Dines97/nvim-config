@@ -8,7 +8,7 @@ if fn.empty(fn.glob(install_path)) > 0 then
 end
 
 local packer_init_config = {
-  max_jobs = 10
+  max_jobs = 10,
 }
 
 require('packer').init(packer_init_config)
@@ -37,10 +37,11 @@ local function packer_plugins(use)
 
   recursive_require_files(vim.fn.stdpath('config') .. '/lua/plugins', 'plugins.')
 
-  -- DAP Start
-  use { 'mfussenegger/nvim-dap' }
-  -- DAP End
+  -- use { '/home/denis/projects/idenator.nvim', config = function()
+  --   require('idenator').setup()
   --
+  -- end }
+
   use { 'marcelofern/vale.nvim' }
 
   use { 'towolf/vim-helm' }
@@ -50,8 +51,6 @@ local function packer_plugins(use)
   use { 'saadparwaiz1/cmp_luasnip', }
 
   use { "rafamadriz/friendly-snippets" }
-
-  use { "folke/lua-dev.nvim" }
 
   -- LSP Start
   -- Ready made LSP configs

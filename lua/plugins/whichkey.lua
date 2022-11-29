@@ -81,12 +81,6 @@ local function config()
       S = { "<cmd>PackerStatus<cr>", "Status" },
       u = { "<cmd>PackerUpdate<cr>", "Update" },
     },
-    e = {
-      name = "Explorer",
-      o = { "<cmd>NvimTreeOpen<cr>", "Open explorer" },
-      c = { "<cmd>NvimTreeClose<cr>", "Close explorer" },
-      r = { "<cmd>NvimTreeRefresh<cr>", "Refresh explorer" }
-    },
     N = {
       name = "Neovim",
       r = { "<cmd>luafile $MYVIMRC<cr>", "Realod config" }
@@ -122,4 +116,4 @@ local function config()
   require("which-key").register(mappings, mappings_opts)
 end
 
-return { "max397574/which-key.nvim", config = config }
+return { "folke/which-key.nvim", config = config }
