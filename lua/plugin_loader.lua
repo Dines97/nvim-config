@@ -63,6 +63,9 @@ local function packer_plugins(use)
   use { "tpope/vim-fugitive" }
   use { "moll/vim-bbye" }
 
+  -- Discord Rich Presence
+  use {'andweeb/presence.nvim'}
+
 
   if packer_bootstrap then
     require('packer').sync()
