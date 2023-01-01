@@ -33,6 +33,7 @@ local function config()
       settings = {
         Lua = {
           workspace = {
+            checkThirdParty = false,
             library = {
               '/run/current-system/sw/share/awesome/lib'
             },
@@ -76,11 +77,6 @@ return {
     'hrsh7th/cmp-nvim-lsp',
     { 'folke/neodev.nvim', config = true },
     'Hoffs/omnisharp-extended-lsp.nvim',
-    {
-      "williamboman/mason.nvim",
-      config = true,
-    },
-    { "williamboman/mason-lspconfig.nvim", config = { automatic_installation = true } },
     'folke/which-key.nvim',
   },
   config = config
