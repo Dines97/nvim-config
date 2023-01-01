@@ -26,8 +26,8 @@ local function config()
       { '[q', ':cprev<CR>' },
       { '<C-q>', ':call QuickFixToggle()<CR>' },
     },
-    autocmd = {
-      { 'BufWritePre', vim.lsp.buf.format({ async = false }), description = 'Format on save' },
+    autocmds = {
+      { 'BufWritePre', function () vim.lsp.buf.format({async = false}) end, description = 'Format on save' },
     },
   }
 
