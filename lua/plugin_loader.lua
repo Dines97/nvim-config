@@ -13,6 +13,20 @@ local packer_init_config = {
 
 require('packer').init(packer_init_config)
 
+local function recursive_files(folder)
+  local entry_list = {}
+
+  for _, entry in ipairs(vim.fn.readir(folder)) do
+    if vim.fn.isdirectory(entry) then
+      recursive_files(folder .. '/' .. entry)
+    else
+      table.insert(entry_list, entry)
+    end
+
+  end
+
+end
+
 local function packer_plugins(use)
   -- Plugin manager
   use { 'wbthomason/packer.nvim' }

@@ -66,14 +66,19 @@ local function config()
     },
   }
 
-  require("lspconfig")["volar"].setup {
+  -- require("lspconfig")["volar"].setup {
+  --   on_attach = on_attach,
+  --   capabilities = capabilities,
+  --
+  --   filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' }
+  -- }
+  --
+  require("lspconfig")["vuels"].setup {
     on_attach = on_attach,
     capabilities = capabilities,
 
     filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' }
   }
-
-
 end
 
 return { 'hrsh7th/cmp-nvim-lsp', after = { 'which-key.nvim', 'nvim-lspconfig', 'neodev.nvim' },
