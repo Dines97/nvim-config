@@ -37,4 +37,4 @@ local function config()
   require("which-key").register(mappigns, mappings_opts)
 end
 
-return { "rcarriga/nvim-dap-ui", requires = { "mfussenegger/nvim-dap" }, config = config }
+return { "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap" }, config = config }

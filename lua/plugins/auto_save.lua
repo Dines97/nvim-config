@@ -6,4 +6,4 @@ local function config()
   require('auto-save').setup(opts)
 end
 
-return { 'pocco81/auto-save.nvim', cofifg = config }
+return { 'pocco81/auto-save.nvim', cofifg = config, enabled = false }

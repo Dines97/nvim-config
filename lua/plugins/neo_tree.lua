@@ -44,11 +44,11 @@ local function config()
 end
 
 return { "nvim-neo-tree/neo-tree.nvim",
-  requires = {
+  dependencies = {
+    "which-key.nvim",
     "nvim-lua/plenary.nvim",
     "kyazdani42/nvim-web-devicons", -- not strictly required, but recommended
     "MunifTanjim/nui.nvim",
   },
   config = config,
-  after = { "which-key.nvim" }
 }

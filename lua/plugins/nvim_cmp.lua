@@ -50,4 +50,4 @@ local function config()
   cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
 end
 
-return { 'hrsh7th/nvim-cmp', after = { 'LuaSnip', 'nvim-autopairs' }, config = config }
+return { 'hrsh7th/nvim-cmp', dependencies = { 'LuaSnip', 'nvim-autopairs' }, config = config }

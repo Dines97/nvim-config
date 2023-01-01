@@ -3,7 +3,7 @@ local function config()
     mappings_style = "sandwich"
   }
 
-  require("surround").setup(opts)
+  require("nvim-surround").setup(opts)
 end
 
-return { "ur4ltz/surround.nvim", config = config }
+return { "kylechui/nvim-surround", config = config }

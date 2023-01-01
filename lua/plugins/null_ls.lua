@@ -17,4 +17,4 @@ local function config()
   null_ls.setup(opts)
 end
 
-return { 'jose-elias-alvarez/null-ls.nvim', requires = { 'nvim-lua/plenary.nvim' }, config = config }
+return { 'jose-elias-alvarez/null-ls.nvim', dependencies = { 'nvim-lua/plenary.nvim' }, config = config }

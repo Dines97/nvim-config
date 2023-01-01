@@ -16,4 +16,4 @@ local function lualine_config()
   require("lualine").setup(opts)
 end
 
-return { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true }, config = lualine_config }
+return { 'nvim-lualine/lualine.nvim', dependencies = { 'kyazdani42/nvim-web-devicons' }, config = lualine_config }

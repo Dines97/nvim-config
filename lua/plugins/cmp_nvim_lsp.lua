@@ -81,5 +81,8 @@ local function config()
   }
 end
 
-return { 'hrsh7th/cmp-nvim-lsp', after = { 'which-key.nvim', 'nvim-lspconfig', 'neodev.nvim' },
-  requires = { 'Hoffs/omnisharp-extended-lsp.nvim' }, config = config }
+return {
+  'hrsh7th/cmp-nvim-lsp',
+  dependencies = { 'Hoffs/omnisharp-extended-lsp.nvim', 'which-key.nvim', 'nvim-lspconfig', 'neodev.nvim' },
+  config = config
+}

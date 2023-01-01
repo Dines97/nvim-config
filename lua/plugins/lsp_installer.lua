@@ -6,4 +6,4 @@ local function config()
   require("nvim-lsp-installer").setup(opts)
 end
 
-return { 'williamboman/nvim-lsp-installer', config = config }
+return { 'williamboman/nvim-lsp-installer', config = config, enabled = false }
