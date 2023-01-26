@@ -20,4 +20,4 @@ local function config()
   require("nvim-treesitter.configs").setup(opts)
 end
 
-return { 'nvim-treesitter/nvim-treesitter', lazy = false, build = ':TSInstallSync all', config = config }
+return { 'nvim-treesitter/nvim-treesitter', lazy = false, build = ':TSUpdate', config = config }

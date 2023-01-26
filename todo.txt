@@ -1,0 +1,4 @@
+1. Inspect plugins
+  1.1 null-ls
+2. Configure which-key
+3. Make nvim-tree color code files according to git instead of ymbol

@@ -73,13 +73,8 @@ local function config()
       h = { function() require("gitsigns").preview_hunk() end, "Preview hunk" }
     },
     P = {
-      name = "Packer",
-      c = { "<cmd>PackerCompile<cr>", "Compile" },
-      i = { "<cmd>PackerInstall<cr>", "Install" },
-      -- r = { "<cmd>lua require('lvim.plugin-loader').recompile()<cr>", "Re-compile" },
-      s = { "<cmd>PackerSync<cr>", "Sync" },
-      S = { "<cmd>PackerStatus<cr>", "Status" },
-      u = { "<cmd>PackerUpdate<cr>", "Update" },
+      name = "Plugins",
+      s = { "<cmd>Lazy sync<cr>", "Sync" },
     },
     N = {
       name = "Neovim",
