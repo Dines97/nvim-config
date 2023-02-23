@@ -1,13 +1,13 @@
 local function config()
   local function on_attach(client, bufnr)
-    require("notify")("LSP attached")
+    require('notify')('LSP attached')
 
     local mappings = {
       l = {
-        f = { function() vim.lsp.buf.format({ async = true }) end, "Format" },
-        d = { function() vim.lsp.buf.definition() end, "Definition" },
-        q = { function() vim.lsp.buf.code_action() end, "Quick fix" },
-        r = { function() vim.lsp.buf.rename() end, "Rename" }
+        f = { function() vim.lsp.buf.format({ async = true }) end, 'Format' },
+        d = { function() vim.lsp.buf.definition() end, 'Definition' },
+        q = { function() vim.lsp.buf.code_action() end, 'Quick fix' },
+        r = { function() vim.lsp.buf.rename() end, 'Rename' }
       }
     }
 
@@ -16,10 +16,10 @@ local function config()
       prefix = '<leader>',
       buffer = bufnr,
       silent = true,
-      noremap = true,
+      noremap = true
     }
 
-    require("which-key").register(mappings, mappings_opts)
+    require('which-key').register(mappings, mappings_opts)
   end
 
   local servers = {
@@ -29,28 +29,39 @@ local function config()
     pyright = {},
     hls = {},
     nil_ls = {},
-    sumneko_lua = {
+    lua_ls = {
       settings = {
         Lua = {
           workspace = {
             checkThirdParty = false,
             library = {
               '/run/current-system/sw/share/awesome/lib'
-            },
+            }
           },
           diagnostics = {
             globals = { 'vim' }
+          },
+          format = {
+            enable = true,
+            -- Put format options here
+            -- NOTE: the value should be STRING!!
+            defaultConfig = {
+              indent_style = 'space',
+              indent_size = '2',
+
+              quote_style = 'single',
+              trailing_table_separator = 'never'
+            }
           }
         }
       }
     },
     omnisharp = {
-
-      cmd = { "OmniSharp" },
+      cmd = { 'OmniSharp' },
       handlers = {
-        ["textDocument/definition"] = require('omnisharp_extended').handler,
-      },
-    },
+        ['textDocument/definition'] = require('omnisharp_extended').handler
+      }
+    }
     -- volar = {
     --   filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' }
     -- },
@@ -62,12 +73,12 @@ local function config()
   }
 
   local capabilities = vim.lsp.protocol.make_client_capabilities()
-  capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
+  capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
   for server, opts in pairs(servers) do
     opts.capabilities = capabilities
     opts.on_attach = on_attach
-    require("lspconfig")[server].setup(opts)
+    require('lspconfig')[server].setup(opts)
   end
 end
 
@@ -77,7 +88,7 @@ return {
     'hrsh7th/cmp-nvim-lsp',
     { 'folke/neodev.nvim', config = true },
     'Hoffs/omnisharp-extended-lsp.nvim',
-    'folke/which-key.nvim',
+    'folke/which-key.nvim'
   },
   config = config
 }
