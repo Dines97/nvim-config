@@ -1,6 +1,6 @@
 vim.g.mapleader = ' '
 
-require("config.plugins")
+require('config.plugins')
 
 vim.opt.timeoutlen = 0
 vim.opt.mouse = 'a'

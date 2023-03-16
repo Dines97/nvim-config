@@ -1,13 +1,12 @@
 local function config()
   local opts = {
-    ensure_installed = "all",
-    -- ensure_installed = { "c", "cpp", "lua", "rust", "nix", "dockerfile", "yaml", "python", "go", "haskell", "make",
-    --   "html", "css", "javascript", "typescript", "vue" },
+    ensure_installed = { 'c', 'cpp', 'lua', 'rust', 'nix', 'dockerfile', 'yaml', 'python', 'go', 'haskell', 'make',
+      'html', 'css', 'javascript', 'typescript', 'vue', 'c_sharp' },
     highlight = {
-      enable = true,
+      enable = true
     },
     incremental_selection = {
-      enable = true,
+      enable = true
     },
     indent = {
       enable = true
@@ -17,7 +16,7 @@ local function config()
   -- vim.opt.foldmethod = 'expr'
   -- vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
 
-  require("nvim-treesitter.configs").setup(opts)
+  require('nvim-treesitter.configs').setup(opts)
 end
 
 return { 'nvim-treesitter/nvim-treesitter', lazy = false, build = ':TSUpdate', config = config }

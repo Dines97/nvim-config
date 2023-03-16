@@ -4,10 +4,7 @@ local function config()
 
     local mappings = {
       l = {
-        f = { function() vim.lsp.buf.format({ async = true }) end, 'Format' },
-        d = { function() vim.lsp.buf.definition() end, 'Definition' },
-        q = { function() vim.lsp.buf.code_action() end, 'Quick fix' },
-        r = { function() vim.lsp.buf.rename() end, 'Rename' }
+        f = { function() vim.lsp.buf.format({ async = true }) end, 'Format' }
       }
     }
 
