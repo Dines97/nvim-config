@@ -8,27 +8,28 @@ local function config()
       -- ["<C-l>"] = "<C-w>l",
       --
       -- Resize with arrows
-      { '<C-Up>', function() require('tmux').resize_top() end },
-      { '<C-Down>', function() require('tmux').resize_bottom() end },
-      { '<C-Left>', function() require('tmux').resize_left() end },
+      { '<C-Up>',    function() require('tmux').resize_top() end },
+      { '<C-Down>',  function() require('tmux').resize_bottom() end },
+      { '<C-Left>',  function() require('tmux').resize_left() end },
       { '<C-Right>', function() require('tmux').resize_right() end },
 
       -- Tab switch buffer
-      { '<S-l>', ':BufferLineCycleNext<CR>' },
-      { '<S-h>', ':BufferLineCyclePrev<CR>' },
+      { '<S-l>',     ':BufferLineCycleNext<CR>' },
+      { '<S-h>',     ':BufferLineCyclePrev<CR>' },
 
       -- Move current line / block with Alt-j/k a la vscode.
-      { '<A-j>', ':m .+1<CR>==' },
-      { '<A-k>', ':m .-2<CR>==' },
+      { '<A-j>',     ':m .+1<CR>==' },
+      { '<A-k>',     ':m .-2<CR>==' },
 
       -- QuickFix
-      { ']q', ':cnext<CR>' },
-      { '[q', ':cprev<CR>' },
-      { '<C-q>', ':call QuickFixToggle()<CR>' },
+      { ']q',        ':cnext<CR>' },
+      { '[q',        ':cprev<CR>' },
+      { '<C-q>',     ':call QuickFixToggle()<CR>' },
+      { '<F5>',      '<Esc>:w<CR>:exec "!python3" shellescape(@%, 1)<CR>' }
     },
     autocmds = {
-      { 'BufWritePre', function () vim.lsp.buf.format({async = false}) end, description = 'Format on save' },
-    },
+      { 'BufWritePre', function() vim.lsp.buf.format({ async = false }) end, description = 'Format on save' }
+    }
   }
 
   require('legendary').setup(opts)
