@@ -1,7 +1,7 @@
 local function config()
   local opts = {
     ensure_installed = { 'c', 'cpp', 'lua', 'rust', 'nix', 'dockerfile', 'yaml', 'python', 'go', 'haskell', 'make',
-      'html', 'css', 'javascript', 'typescript', 'vue', 'c_sharp' },
+      'html', 'css', 'javascript', 'typescript', 'vue', 'c_sharp', 'commonlisp' },
     highlight = {
       enable = true
     },
