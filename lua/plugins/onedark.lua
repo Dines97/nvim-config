@@ -11,8 +11,8 @@ local function config()
     }
   }
 
-  require("onedark").setup(opts)
-  require("onedark").load()
+  require('onedark').setup(opts)
+  require('onedark').load()
 end
 
 return { 'navarasu/onedark.nvim', config = config }
